@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alternate Story Extravaganza — Interactive e‑Book</title>
+  <style>
+    :root{
+      --bg:#070A12;
+      --panel:#0D1222;
+      --panel2:#0A0F1E;
+      --text:#E9ECF5;
+      --muted:#AAB2D6;
+      --line:rgba(255,255,255,.10);
+      --blue:#46B3FF;
+      --blue2:#1F7FFF;
+      --gold:#D2B46B;
+      --danger:#FF4D6D;
+      --btn:#121A31;
+      --btn2:#0F1730;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius:16px;
+      --radius2:12px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(70,179,255,.20), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(210,180,107,.14), transparent 55%),
+        radial-gradient(900px 600px at 50% 100%, rgba(31,127,255,.10), transparent 55%),
+        linear-gradient(180deg, #05070F 0%, #070A12 40%, #060812 100%);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:18px;
+    }
+    .app{
+      width:min(1060px, 100%);
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      align-content:start;
+    }
+
+    header{
+      background: linear-gradient(180deg, rgba(13,18,34,.95), rgba(10,15,30,.80));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .title{
+      font-size: clamp(18px, 2.6vw, 26px);
+      letter-spacing:.2px;
+      line-height:1.1;
+      font-weight:800;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size: 13px;
+      line-height:1.2;
+    }
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(18,26,49,.55);
+      color:var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.15) 35%, rgba(255,255,255,0) 55%),
+                  linear-gradient(180deg, var(--blue), var(--blue2));
+      box-shadow: 0 0 0 4px rgba(70,179,255,.12);
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18,26,49,.92), rgba(15,23,48,.75));
+      color:var(--text);
+      border-radius: 12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size: 13px;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(70,179,255,.35); }
+    .btn:active{ transform: translateY(0px); }
+    .btn.secondary{ color:var(--muted); font-weight:800; }
+    .btn.danger{ border-color: rgba(255,77,109,.35); }
+    .btn.danger:hover{ border-color: rgba(255,77,109,.60); }
+
+    main{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(13,18,34,.88), rgba(10,15,30,.78));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+
+    .storyTop{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding-bottom:12px;
+      margin-bottom:14px;
+    }
+
+    .sceneMeta{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .sceneLabel{
+      color:var(--muted);
+      font-size: 12px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+    }
+    .sceneName{
+      font-size: 18px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .pathBox{
+      display:flex; flex-direction:column; gap:6px; min-width: 220px;
+      background: rgba(18,26,49,.35);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius2);
+      padding:12px;
+    }
+    .pathTitle{
+      color:var(--muted);
+      font-size: 12px;
+      font-weight:800;
+      letter-spacing:.2px;
+      text-transform:uppercase;
+    }
+    .pathText{
+      color:var(--text);
+      font-size: 13px;
+      line-height:1.35;
+      font-weight:750;
+      word-break:break-word;
+      max-width: 100%;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+
+    .narrative{
+      background: rgba(5,8,18,.35);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius: var(--radius2);
+      padding:14px;
+      line-height:1.65;
+      font-size: 15px;
+      color: #F1F3FF;
+    }
+    .narrative p{ margin:0 0 10px 0; }
+    .narrative p:last-child{ margin-bottom:0; }
+    .emph{
+      color: var(--gold);
+      font-weight: 900;
+    }
+    .glow{
+      text-shadow: 0 0 18px rgba(70,179,255,.18);
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top: 4px;
+    }
+
+    @media (min-width: 720px){
+      .choices{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .choiceBtn{
+      width:100%;
+      text-align:left;
+      padding:14px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(18,26,49,.80), rgba(15,23,48,.58));
+      color:var(--text);
+      cursor:pointer;
+      font-size: 14px;
+      line-height:1.3;
+      font-weight:900;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      position:relative;
+      overflow:hidden;
+      min-height: 58px;
+    }
+    .choiceBtn::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(300px 120px at 15% 0%, rgba(70,179,255,.28), transparent 60%);
+      opacity:.0;
+      transition: opacity .18s ease;
+      pointer-events:none;
+    }
+    .choiceBtn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(70,179,255,.40);
+      background: linear-gradient(180deg, rgba(31,127,255,.18), rgba(15,23,48,.62));
+    }
+    .choiceBtn:hover::after{ opacity:1; }
+    .choiceBtn:active{ transform: translateY(0px); }
+    .choiceKey{
+      display:inline-flex; align-items:center; justify-content:center;
+      width:26px; height:26px;
+      border-radius:9px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(7,10,18,.45);
+      color: var(--gold);
+      margin-right:10px;
+      font-size: 12px;
+    }
+    .choiceText{
+      display:inline;
+      vertical-align:middle;
+      color: #F6F7FF;
+      font-weight: 900;
+    }
+
+    footer{
+      color: rgba(170,178,214,.95);
+      font-size: 12px;
+      text-align:center;
+      padding: 6px 0 0 0;
+    }
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(760px, 100%);
+      background: linear-gradient(180deg, rgba(13,18,34,.97), rgba(10,15,30,.92));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      box-shadow: 0 30px 120px rgba(0,0,0,.75);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+    }
+    .modalHeader .h{
+      font-weight:1000; letter-spacing:.2px;
+    }
+    .modalBody{
+      padding:14px 16px 18px 16px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size: 14px;
+    }
+    .modalBody strong{ color: var(--text); }
+    .kbd{
+      display:inline-flex;
+      padding:2px 8px;
+      border-radius: 9px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(18,26,49,.50);
+      color: var(--gold);
+      font-weight: 950;
+      font-size: 12px;
+      margin:0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="title">Alternate Story Extravaganza</div>
+        <div class="subtitle">Interactive dark-theme e‑book • Choose a path • Multiple outcomes</div>
+      </div>
+      <div class="toolbar">
+        <div class="chip" title="Your progress path">
+          <span class="dot" aria-hidden="true"></span>
+          <span><strong>Path:</strong> <span id="pathChip">—</span></span>
+        </div>
+        <button class="btn secondary" id="helpBtn" type="button">Help / Controls</button>
+        <button class="btn danger" id="restartBtn" type="button">Restart</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="storyTop">
+          <div class="sceneMeta">
+            <div class="sceneLabel">Scene</div>
+            <div class="sceneName" id="sceneName">—</div>
+          </div>
+          <div class="pathBox">
+            <div class="pathTitle">Selected choices</div>
+            <div class="pathText" id="pathText">Start your story.</div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="narrative" id="narrative">
+            <!-- Story injected here -->
+          </div>
+
+          <div class="choices" id="choices">
+            <!-- Buttons injected here -->
+          </div>
+        </div>
+
+        <footer>Tip: Use keys <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> <span class="kbd">4</span> to pick a choice.</footer>
+      </section>
+    </main>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modalOverlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modalHeader">
+        <div class="h" id="modalTitle">How to read this interactive story</div>
+        <button class="btn secondary" id="closeModalBtn" type="button" aria-label="Close help">Close</button>
+      </div>
+      <div class="modalBody">
+        <p><strong>Every scene has four choices.</strong> Pick one and the story advances down that branch.</p>
+        <p>At the end, you’ll reach a final outcome. You can <strong>restart anytime</strong> to explore different endings.</p>
+        <p>
+          Controls: <span class="kbd">1</span>–<span class="kbd">4</span> select choices, <span class="kbd">R</span> restarts.
+          If your device supports it, you can also tap buttons.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Branching model:
+    // - 10 scenes (Scene 1..10)
+    // - Each scene presents 4 choices.
+    // - Each choice appends to the path and directs to the next scene index.
+    //
+    // We implement A + B:
+    // - A: Main arc preserved via consistent thematic beats in Scenes 1..8 (character/choices, revelation, restraint).
+    // - B: Scene 10 includes 4 true outcome endings determined by earlier decisions (via path patterns).
+
+    // Narrative is derived from the provided script and converted into interactive scenes.
+    // "variant" is tracked by path.
+
+    const STORY = {
+      start: { sceneId: 1, state: { path: [], outcome: null } },
+
+      // Utility: For simplicity, each scene routes to next scene deterministically.
+      // Outcome selection happens in Scene 10 by examining the accumulated path.
+
+      scenes: {
+        1: {
+          title: "The Divorce Room",
+          paragraphs: [
+            "At the divorce signing, Marcus sat silent while Simone and her best friend Andre laughed like the whole thing was a joke aimed at someone else.",
+            "The attorney asked if Marcus wanted to contest. He touched the envelope in his jacket pocket—felt the weight of it—and answered, calm as stone: <span class='emph'>no</span>.",
+            "He knew what they didn’t. That calm wasn’t emptiness. It was preparation."
+          ],
+          choices: [
+            "Stay quiet. Sign anyway—like nothing can shake you.",
+            "Interrupt the process—demand proof first.",
+            "Ask for a short recess. Then read the letter again.",
+            "Refuse to sign—force the attorney to explain every clause."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 2, state: advanceState(state, choiceIndex, "1") })
+        },
+
+        2: {
+          title: "A Quiet Tuesday",
+          paragraphs: [
+            "Three months earlier, Marcus had buried his father on a cold Tuesday morning.",
+            "The funeral was small: him, a few sanitation men, and a preacher who kept the words brief—because that was how his father would have wanted it.",
+            "Marcus didn’t cry. He’d been taught that grief was private—something you carried in your chest, not on your face."
+          ],
+          choices: [
+            "Carry grief the way your father taught you: silent, steady, controlled.",
+            "Confess the loss to Simone—hoping she’ll understand.",
+            "Look for something hidden in the house—like destiny left clues.",
+            "Go to work that day like nothing happened—prove strength through routine."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 3, state: advanceState(state, choiceIndex, "2") })
+        },
+
+        3: {
+          title: "Rooms That Feel New",
+          paragraphs: [
+            "After the funeral, the house changed without moving. Marcus came home and paused in doorways like he’d never seen them before.",
+            "Simone noticed the distance. She asked questions, and he answered a beat too late—like his mind was still somewhere colder.",
+            "Grief pulled inward. Everything outside himself felt less real."
+          ],
+          choices: [
+            "Protect Simone with distance—so she won’t see how broken you feel.",
+            "Let Simone near you—give her honesty, even if it hurts.",
+            "Try to fight the numbness with work—fix leaks, check systems, stay useful.",
+            "Start watching Andre—notice what Simone laughs at, and what she stops touching."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 4, state: advanceState(state, choiceIndex, "3") })
+        },
+
+        4: {
+          title: "The Metal Box",
+          paragraphs: [
+            "One Saturday, Marcus found a metal box hidden behind old tax returns.",
+            "The combination was his father’s, written carefully on masking tape. The lock opened with a sound like something deciding to be known.",
+            "Inside were documents Marcus didn’t recognize—legal papers, stock certificates, filings dated years before he’d been born."
+          ],
+          choices: [
+            "Read everything slowly. Learn the truth before anyone else touches it.",
+            "Take only the letter—leave the rest for later.",
+            "Lock the box again. Pretend you never found it.",
+            "Call an attorney immediately—force the world to catch up."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 5, state: advanceState(state, choiceIndex, "4") })
+        },
+
+        5: {
+          title: "Nine Hundred Million",
+          paragraphs: [
+            "The trust had been managed quietly for years, waiting like a second heartbeat under the same chest.",
+            "Marcus learned what his father had never said out loud: $900 million in an account Marcus didn’t know existed.",
+            "He didn’t feel excited. He felt strange—like someone had handed him a life that wasn’t built for their hands."
+          ],
+          choices: [
+            "Tell Simone nothing—choose restraint, even if it makes you lonely.",
+            "Tell Simone the truth today—force her eyes open now.",
+            "Watch Simone differently—quietly observe what she values.",
+            "Write your father’s letter into your own rules: character first, money later."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 6, state: advanceState(state, choiceIndex, "5") })
+        },
+
+        6: {
+          title: "The Split Happens",
+          paragraphs: [
+            "Simone asked about savings like they were numbers meant to impress her.",
+            "When Marcus answered plainly, she tightened—fine. The word hung in the kitchen like smoke.",
+            "The next morning she asked for a divorce without crying or yelling. Just plain truth: you want different lives."
+          ],
+          choices: [
+            "Accept it quickly. Sign without drama.",
+            "Ask for reconciliation. Offer the future you didn’t explain before.",
+            "Provoke Simone with anger—make her feel the loss.",
+            "Offer an odd kindness: make it easy, so she can’t blame you for cruelty."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 7, state: advanceState(state, choiceIndex, "6") })
+        },
+
+        7: {
+          title: "The Signature / The Switch",
+          paragraphs: [
+            "Back downtown, papers slid across the conference table with a clicking pen in a silence that didn’t belong to Marcus.",
+            "Simone kept the house, the car, the savings. Marcus would sign away future claims—legally untethered.",
+            "On the last line, Marcus paused. His fingers found the envelope in his pocket.",
+            "Not the trust documents—just the letter his father wrote two years before he died. The reason he’d lived small."
+          ],
+          choices: [
+            "Sign last page anyway. Let the past stay buried where it belongs.",
+            "Show Simone the letter. Force remorse into the room.",
+            "Refuse the no-future-claims clause. Negotiate—fight for your rights.",
+            "Sign, then walk out without looking back—choose silence as your power."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 8, state: advanceState(state, choiceIndex, "7") })
+        },
+
+        8: {
+          title: "A Public Number",
+          paragraphs: [
+            "Two weeks later, the divorce was finalized. Simone celebrated. Andre made plans like sunshine.",
+            "But then—an attorney called. Not to rewrite the past, but to update the present: Marcus had assumed control of an asset portfolio.",
+            "A number spread fast. $900 million. The world didn’t ask who Simone deserved. It only measured what she missed."
+          ],
+          choices: [
+            "Let Simone wonder. Block your contact. Live unchanged.",
+            "Reach out once—give a single, controlled sentence of closure.",
+            "Turn charity into proof: scholarships, trades, second chances—quietly.",
+            "Expose Andre’s betrayal to the public—make the truth a spectacle."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 9, state: advanceState(state, choiceIndex, "8") })
+        },
+
+        9: {
+          title: "Workshop of Memory",
+          paragraphs: [
+            "Six months after the divorce, Marcus stood in his father’s old workshop—now part of a community center.",
+            "He kept one corner exactly as it was: tools on the pegboard, the metal box on a shelf, steel-toe boots worn smooth by decades of walking.",
+            "He opened the box again, read the letter again—until it sounded like a promise."
+          ],
+          choices: [
+            "Build quietly: fund programs, house people, treat every life like it’s investable.",
+            "Go to the grave first. Ask forgiveness for how you handled the truth.",
+            "Use wealth to punish Andre—watch him lose status.",
+            "Send Simone a message: “I’m sorry.” Let her interpret it however she wants."
+          ],
+          next: (choiceIndex, state) => ({ sceneId: 10, state: advanceState(state, choiceIndex, "9") })
+        },
+
+        10: {
+          title: "Choose the Outcome",
+          paragraphs: [
+            "The story could have ended with money. It could have ended with rage.",
+            "Instead, Marcus ended it like his father taught him: <span class='emph'>with character</span>—carrying power without letting it bend the spine."
+          ],
+          choices: [
+            "Outcome: The Steady Man (charity over correction).",
+            "Outcome: The Locked Door (silence as a boundary).",
+            "Outcome: The Quiet Triumph (help that never needs applause).",
+            "Outcome: The Final Warning (truth delivered—no theatrics)."
+          ],
+          next: (choiceIndex, state) => {
+            // Scene 10 uses the path plus the final choice to set one of four endings.
+            const finalOutcome = pickOutcome(state, choiceIndex);
+            return { sceneId: "END", state: { ...state, outcome: finalOutcome } };
+          }
+        },
+
+        END: {
+          title: "Final Outcome",
+          paragraphs: [
+            "Loading outcome…"
+          ],
+          choices: []
+        }
+      }
+    };
+
+    function advanceState(state, choiceIndex, sceneKey){
+      // choiceIndex in [0..3]
+      const nextState = structuredCloneSafe(state);
+      nextState.path.push({ scene: sceneKey, pick: choiceIndex+1 });
+      return nextState;
+    }
+
+    function structuredCloneSafe(obj){
+      try { return structuredClone(obj); } catch { return JSON.parse(JSON.stringify(obj)); }
+    }
+
+    function pickOutcome(state, lastChoiceIndex0){
+      // We map to 4 outcomes (A-style main arc preserved).
+      // Additionally, earlier picks can bias the ending:
+      // - If the reader chose "fight/interrupt" themes early, end more assertively.
+      // - If they chose "silence/lock/restrain" themes, end more boundary-focused.
+      // - If they chose "charity/second chances" themes, end more hopeful.
+      // - If they chose "reveal/expose" themes, end with warning/clarity.
+      const picks = state.path.map(p => p.pick);
+      const sum = picks.reduce((a,b)=>a+b,0);
+      const last = lastChoiceIndex0 + 1;
+
+      // Heuristics:
+      const silentBias = countKeywordPicks(picks, [1,1,1,4,2]); // placeholder pattern
+      const charityBias = countCharity(picks);
+      const assertBias = countAssert(picks);
+      const revealBias = countReveal(picks);
+
+      let score = [0,0,0,0]; // for four endings
+      // Baseline from last choice:
+      score[last-1] += 3;
+
+      // Earlier choices bias:
+      score[0] += charityBias * 2;         // Steady Man
+      score[1] += silentBias * 2;          // Locked Door
+      score[2] += charityBias;             // Quiet Triumph
+      score[3] += (assertBias + revealBias); // Final Warning
+
+      // Tie-breaker with sum to avoid uniformity:
+      score[(sum % 4)] += 1;
+
+      const idx = argMax(score);
+      return ["STEADY_MAN","LOCKED_DOOR","QUIET_TRIUMPH","FINAL_WARNING"][idx];
+    }
+
+    function argMax(arr){
+      let best = 0;
+      for(let i=1;i<arr.length;i++){
+        if(arr[i] > arr[best]) best = i;
+      }
+      return best;
+    }
+
+    function countKeywordPicks(picks, arr){
+      // Very light heuristic: treat picks equal to certain numbers as "more restrained"
+      // arr is not a real keyword map—just a soft bias tool.
+      // We'll interpret:
+      // - picks including 1 (often "quiet/accept") => silence
+      // - picks including 2 (often "confess/reveal") => reveal-ish
+      // - picks including 4 (often "refuse/expose") => assert
+      let count = 0;
+      for(const p of picks){
+        if(p === 1) count += 1;
+        if(p === 4) count += 0.5;
+        if(p === 2) count += 0.2;
+      }
+      return count;
+    }
+
+    function countCharity(picks){
+      // charity/doing-right tends to show up in scenes where choices include "fund/build/help"
+      // We bias when pick is 3 more often (we assigned "charity" to choice 3 at Scene 8 and Scene 9).
+      let count = 0;
+      for(const p of picks){
+        if(p === 3) count += 1;
+      }
+      return count;
+    }
+
+    function countAssert(picks){
+      // assert/fight tends to show up when pick is 2 or 4 in several scenes.
+      let count = 0;
+      for(const p of picks){
+        if(p === 2) count += 0.7;
+        if(p === 4) count += 1;
+      }
+      return count;
+    }
+
+    function countReveal(picks){
+      // reveal/expose tends to correlate with 2/4 choices too, but slightly more with 4
+      let count = 0;
+      for(const p of picks){
+        if(p === 4) count += 1;
+        if(p === 2) count += 0.6;
+      }
+      return count;
+    }
+
+    function outcomeCopy(outcomeId){
+      // Provide distinct endings (B) while keeping the core Marcus theme (A).
+      const basePath = "Your choices led you here.";
+      const ends = {
+        STEADY_MAN: {
+          sceneName: "The Steady Man",
+          paragraphs: [
+            "Marcus doesn’t correct the narrative. He outlasts it.",
+            "The day the number becomes public, Simone expects a fight. Instead she finds distance—measured, deliberate.",
+            "Marcus turns wealth into work: housing, trades, scholarships. Help lands quietly, like sunrise that never asks permission.",
+            "And when the world calls him “mysterious,” it misses the truth: he isn’t mysterious—he’s steady."
+          ]
+        },
+        LOCKED_DOOR: {
+          sceneName: "The Locked Door",
+          paragraphs: [
+            "Marcus makes silence his boundary, not his punishment.",
+            "He lets Simone reach for him—and he doesn’t pull back with cruelty. He simply doesn’t open doors that were closed on purpose.",
+            "The story changes anyway: Andre doubts, recalculates, and searches for a new stage. But Marcus keeps walking forward, unbothered by applause or anger.",
+            "In the end, power isn’t what you do to others. It’s what you refuse to let them pull from you."
+          ]
+        },
+        QUIET_TRIUMPH: {
+          sceneName: "The Quiet Triumph",
+          paragraphs: [
+            "Marcus chooses a different kind of victory: the kind nobody screenshots.",
+            "He funds programs that don’t advertise. He invests in men who were told they’d never matter—and then proves the lie with action.",
+            "Simone learns too late that character doesn’t need a banner. It’s visible in how someone treats people when they no longer have to.",
+            "Marcus stays the same. The world changes around him."
+          ]
+        },
+        FINAL_WARNING: {
+          sceneName: "The Final Warning",
+          paragraphs: [
+            "Marcus delivers truth without theatrics.",
+            "He doesn’t expose names for revenge—he exposes patterns: how someone takes, how someone measures, how someone sells dignity for a shiny life.",
+            "Simone can’t un-know what the law already confirmed. Andre can’t charm his way out of consequences.",
+            "But Marcus remains merciful toward himself: he doesn’t become bitter. He becomes better."
+          ]
+        }
+      };
+      return ends[outcomeId] || ends.STEADY_MAN;
+    }
+
+    // Rendering
+    const elSceneName = document.getElementById("sceneName");
+    const elNarrative = document.getElementById("narrative");
+    const elChoices = document.getElementById("choices");
+    const elPathChip = document.getElementById("pathChip");
+    const elPathText = document.getElementById("pathText");
+
+    const helpBtn = document.getElementById("helpBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    let appState = structuredCloneSafe(STORY.start);
+
+    function setOutcomeUI(outcomeId){
+      const copy = outcomeCopy(outcomeId);
+      elSceneName.textContent = copy.sceneName;
+
+      elNarrative.innerHTML = copy.paragraphs.map(p => `<p>${p}</p>`).join("");
+      elChoices.innerHTML = "";
+      elChoices.style.display = "none";
+
+      elPathChip.textContent = appState.path.length
+        ? appState.path.map(x => `S${x.scene}:${x.pick}`).join(" · ")
+        : "—";
+
+      elPathText.textContent = appState.path.length
+        ? appState.path.map(x => `Scene ${x.scene} → Choice ${x.pick}`).join(" | ")
+        : "Start your story.";
+    }
+
+    function render(){
+      const sceneId = appState.sceneId ?? 1;
+
+      if(sceneId === "END"){
+        setOutcomeUI(appState.outcome || "STEADY_MAN");
+        return;
+      }
+
+      const scene = STORY.scenes[sceneId];
+      elChoices.style.display = "grid";
+      elSceneName.innerHTML = `${scene.title}`;
+
+      elNarrative.innerHTML = scene.paragraphs.map(p => `<p>${p}</p>`).join("");
+
+      // Path display
+      const pathArr = appState.path || [];
+      elPathChip.textContent = pathArr.length ? pathArr.map(x => `S${x.scene}:${x.pick}`).join(" · ") : "—";
+      elPathText.textContent = pathArr.length
+        ? pathArr.map(x => `Scene ${x.scene} → Choice ${x.pick}`).join(" | ")
+        : "Start your story.";
+
+      // Choices
+      elChoices.innerHTML = "";
+      scene.choices.forEach((c, idx) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "choiceBtn";
+        b.setAttribute("data-choice", idx+1);
+
+        const key = idx+1;
+        b.innerHTML = `
+          <span class="choiceKey">${key}</span>
+          <span class="choiceText">${escapeHtml(c)}</span>
+        `;
+
+        b.addEventListener("click", () => {
+          const choiceIndex0 = idx; // 0..3
+          const nextObj = scene.next(choiceIndex0, appState);
+          appState = { ...nextObj.state, sceneId: nextObj.sceneId };
+          render();
+        });
+
+        elChoices.appendChild(b);
+      });
+    }
+
+    function escapeHtml(str){
+      // preserve basic HTML markup in story paragraphs by using escape for choice text only.
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function restart(){
+      appState = structuredCloneSafe(STORY.start);
+      appState.sceneId = 1;
+      render();
+    }
+
+    // Initialize
+    appState.sceneId = 1;
+    render();
+
+    // Controls
+    document.addEventListener("keydown", (e) => {
+      if(modalOverlay.style.display === "flex") return;
+
+      const key = e.key.toLowerCase();
+      if(key === "r"){
+        restart();
+        return;
+      }
+      const num = parseInt(e.key, 10);
+      if(num >= 1 && num <= 4){
+        const btn = elChoices.querySelector(`button[data-choice="${num}"]`);
+        if(btn) btn.click();
+      }
+    });
+
+    // Modal
+    function openModal(){
+      modalOverlay.style.display = "flex";
+    }
+    function closeModal(){
+      modalOverlay.style.display = "none";
+    }
+    helpBtn.addEventListener("click", openModal);
+    closeModalBtn.addEventListener("click", closeModal);
+    modalOverlay.addEventListener("click", (e) => {
+      if(e.target === modalOverlay) closeModal();
+    });
+
+    restartBtn.addEventListener("click", restart);
+  </script>
+</body>
+</html>

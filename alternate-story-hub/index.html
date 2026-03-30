@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Alternate Story Extravaganza — Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:       #06070d;
+      --surface:  #0c0f1c;
+      --surface2: #111525;
+      --border:   rgba(120,140,255,.13);
+      --text:     #dde3ff;
+      --muted:    #7a85b0;
+      --accent:   #3d8fff;
+      --gold:     #c8a24a;
+      --gold2:    #e8c870;
+      --green:    #41e88a;
+      --red:      #ff5166;
+      --r:        14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 900px 500px at 10% -5%, rgba(61,143,255,.13), transparent 60%),
+        radial-gradient(ellipse 700px 400px at 85% 15%, rgba(200,162,74,.10), transparent 55%),
+        radial-gradient(ellipse 1000px 600px at 50% 110%, rgba(65,232,138,.06), transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT ── */
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px 100px; position: relative; z-index: 1; }
+
+    /* ── HEADER ── */
+    header {
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+      display: flex;
+      align-items: flex-end;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .logo-stack { flex: 1; min-width: 240px; }
+    .overline {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--text);
+    }
+    h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 60%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tagline {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 300;
+      max-width: 540px;
+      line-height: 1.6;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: all .18s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #5aabff; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(61,143,255,.3); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: rgba(120,140,255,.35); background: rgba(61,143,255,.06); }
+
+    /* ── STATS BAR ── */
+    .stats {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold2);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .section-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .pill {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: .1em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(61,143,255,.12);
+      border: 1px solid rgba(61,143,255,.22);
+      color: var(--accent);
+    }
+
+    /* ── STORY GRID ── */
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 22px;
+      margin-bottom: 60px;
+    }
+
+    /* ── STORY CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 55px rgba(0,0,0,.5);
+      border-color: rgba(120,140,255,.28);
+    }
+    .card-accent-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--accent) 100%);
+    }
+    .card-body { padding: 22px 22px 18px; flex: 1; }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .tag-drama  { background: rgba(200,162,74,.15); color: var(--gold2); border: 1px solid rgba(200,162,74,.25); }
+    .tag-scenes { background: rgba(61,143,255,.12); color: var(--accent); border: 1px solid rgba(61,143,255,.2); }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .card p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-footer {
+      padding: 14px 22px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-stats {
+      display: flex;
+      gap: 14px;
+    }
+    .cs {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cs strong { color: var(--text); font-weight: 500; }
+    .read-btn {
+      font-size: 13px;
+      padding: 8px 18px;
+    }
+
+    /* ── ADD NEW CARD ── */
+    .card-add {
+      background: transparent;
+      border: 1px dashed rgba(120,140,255,.22);
+      border-radius: var(--r);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 40px 24px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all .2s;
+      min-height: 260px;
+    }
+    .card-add:hover {
+      border-color: rgba(61,143,255,.35);
+      background: rgba(61,143,255,.04);
+    }
+    .add-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(61,143,255,.1);
+      border: 1px solid rgba(61,143,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      color: var(--accent);
+    }
+    .card-add h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .card-add p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 36px;
+      margin-bottom: 60px;
+    }
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 28px;
+      margin-top: 28px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #06070d;
+    }
+    .step h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .step code {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      background: rgba(61,143,255,.1);
+      border: 1px solid rgba(61,143,255,.18);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    footer p { font-size: 13px; color: var(--muted); }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .story-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
+      header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-stack">
+      <div class="overline">Interactive Story Collection</div>
+      <h1>Alternate Story<br/><em>Extravaganza</em></h1>
+      <p class="tagline">
+        Every story is a world with more than one path. Pick your scene,
+        shape your outcome — each script becomes a branching adventure
+        with 10 scenes, 4 choices each, and endings only you decide.
+      </p>
+    </div>
+    <div class="header-actions">
+      <a href="src/generator.html" class="btn btn-primary">+ Add New Story</a>
+      <a href="https://github.com/YOUR_USERNAME/alternate-story-hub" target="_blank" class="btn btn-outline">GitHub ↗</a>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><span class="stat-num" id="storyCount">1</span><span class="stat-label">Stories Published</span></div>
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">Scenes per Story</span></div>
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Choices per Scene</span></div>
+    <div class="stat"><span class="stat-num">4+</span><span class="stat-label">Unique Endings</span></div>
+  </div>
+
+  <!-- Story Grid -->
+  <div class="section-head">
+    <h2>Story Library</h2>
+    <span class="pill">LIVE</span>
+  </div>
+
+  <div class="story-grid">
+
+    <!-- Story Card: Marcus Jenkins -->
+    <div class="card">
+      <div class="card-accent-bar"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="tag tag-drama">Drama</span>
+          <span class="tag tag-scenes">10 Scenes</span>
+        </div>
+        <h3>The Quiet Inheritance</h3>
+        <p>
+          At the divorce signing, Marcus sat silent while his wife Simone and his best friend Andre laughed about his "small life." What they didn't know — and what Marcus would never tell them — would change everything. A story about character, restraint, and what power really looks like.
+        </p>
+      </div>
+      <div class="card-footer">
+        <div class="card-stats">
+          <span class="cs"><strong>4</strong> Endings</span>
+          <span class="cs"><strong>~35 min</strong> read</span>
+        </div>
+        <a href="stories/marcus-jenkins.html" class="btn btn-primary read-btn">Read Story</a>
+      </div>
+    </div>
+
+    <!-- Add New Placeholder -->
+    <a href="src/generator.html" class="card-add">
+      <div class="add-icon">+</div>
+      <h4>Add a New Story</h4>
+      <p>Paste your script into the generator and Claude will build the full interactive branching experience automatically.</p>
+    </a>
+
+  </div>
+
+  <!-- How It Works -->
+  <div class="section-head">
+    <h2>How It Works</h2>
+  </div>
+  <div class="how-section">
+    <div class="how-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Write or Record a Script</h4>
+        <p>Any spoken word, short story, or narrative script. Timestamped or plain text — both work. Drop it in <code>scripts/</code>.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Open the Generator</h4>
+        <p>Go to <code>src/generator.html</code> — paste your script, give it a title and genre tag, then click Generate.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Claude Builds the Story</h4>
+        <p>The AI reads your script and generates 10 branching scenes, 4 choices each, with A/B style endings — all in one dark-theme HTML file.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Save &amp; Publish to Hub</h4>
+        <p>Download the generated HTML to <code>stories/</code>, add a card to <code>index.html</code>, and push to GitHub. It's live.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Alternate Story Extravaganza Hub — <a href="https://github.com/YOUR_USERNAME/alternate-story-hub" target="_blank">View on GitHub</a></p>
+    <p>Built with Claude · Interactive branching stories</p>
+  </footer>
+
+</div>
+</body>
+</html>
