@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Quiet Inheritance — Alternate Story Extravaganza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#05060e;
+      --panel:#0a0c1b;
+      --panel2:#0d1020;
+      --border:rgba(110,130,255,.12);
+      --text:#e4e9ff;
+      --muted:#6e7aa8;
+      --accent:#4d8fff;
+      --gold:#c9a84c;
+      --gold2:#f0d080;
+      --green:#3edc82;
+      --red:#ff4f6e;
+      --shadow:0 20px 64px rgba(0,0,0,.6);
+      --r:16px;
+      --r2:12px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 15% -10%, rgba(77,143,255,.16), transparent 60%),
+        radial-gradient(900px 600px at 92% 0%, rgba(201,168,76,.12), transparent 55%),
+        radial-gradient(900px 600px at 50% 105%, rgba(77,143,255,.08), transparent 55%),
+        #05060e;
+      color:var(--text);
+      font-family:'Outfit',sans-serif;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:20px;
+    }
+    .app{
+      width:min(1060px,100%);
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+      align-content:start;
+    }
+
+    /* ── HEADER ── */
+    header{
+      background:linear-gradient(180deg, rgba(10,12,27,.96), rgba(8,10,22,.80));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .brand{ display:flex; flex-direction:column; gap:4px; }
+    .back-link{
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      letter-spacing:.12em;
+      color:var(--muted);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:color .15s;
+    }
+    .back-link:hover{ color:var(--accent); }
+    .story-title{
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.2rem,2.8vw,1.7rem);
+      font-weight:700;
+      line-height:1.1;
+    }
+    .story-subtitle{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:300;
+    }
+    .toolbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .tbtn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(10,12,27,.7);
+      color:var(--text);
+      border-radius:10px;
+      padding:9px 14px;
+      cursor:pointer;
+      font-weight:500;
+      font-size:13px;
+      font-family:'Outfit',sans-serif;
+      transition:all .15s;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      white-space:nowrap;
+    }
+    .tbtn:hover{ border-color:rgba(77,143,255,.35); background:rgba(77,143,255,.07); }
+    .tbtn.active{ border-color:rgba(77,143,255,.55); background:rgba(77,143,255,.15); color:#a0c4ff; }
+    .tbtn.danger:hover{ border-color:rgba(255,79,110,.45); color:var(--red); }
+    .tbtn.gold-btn{
+      border-color:rgba(201,168,76,.35);
+      color:var(--gold2);
+    }
+    .tbtn.gold-btn:hover{
+      border-color:rgba(201,168,76,.6);
+      background:rgba(201,168,76,.08);
+      box-shadow:0 0 20px rgba(201,168,76,.15);
+    }
+
+    /* ── NARRATION BAR ── */
+    #narrationBar{
+      background:linear-gradient(90deg, rgba(77,143,255,.08), rgba(201,168,76,.05));
+      border:1px solid rgba(77,143,255,.2);
+      border-radius:var(--r2);
+      padding:14px 18px;
+      display:none;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    #narrationBar.visible{ display:flex; }
+    .narr-label{
+      font-size:12px;
+      font-family:'DM Mono',monospace;
+      letter-spacing:.1em;
+      color:var(--accent);
+      text-transform:uppercase;
+    }
+    .narr-status{
+      font-size:13px;
+      color:var(--muted);
+      flex:1;
+    }
+    .narr-wave{
+      display:flex;
+      align-items:center;
+      gap:3px;
+    }
+    .narr-wave span{
+      display:inline-block;
+      width:3px;
+      background:var(--accent);
+      border-radius:3px;
+      opacity:0;
+    }
+    .narr-wave.speaking span{ opacity:1; }
+    .narr-wave span:nth-child(1){ height:8px;  animation:wave 0.9s ease infinite 0s; }
+    .narr-wave span:nth-child(2){ height:14px; animation:wave 0.9s ease infinite 0.15s; }
+    .narr-wave span:nth-child(3){ height:20px; animation:wave 0.9s ease infinite 0.30s; }
+    .narr-wave span:nth-child(4){ height:14px; animation:wave 0.9s ease infinite 0.45s; }
+    .narr-wave span:nth-child(5){ height:8px;  animation:wave 0.9s ease infinite 0.60s; }
+    @keyframes wave{
+      0%,100%{ transform:scaleY(.4); }
+      50%{ transform:scaleY(1); }
+    }
+    .voice-select{
+      background:rgba(10,12,27,.8);
+      border:1px solid var(--border);
+      border-radius:8px;
+      color:var(--text);
+      font-family:'Outfit',sans-serif;
+      font-size:12px;
+      padding:6px 10px;
+      outline:none;
+      cursor:pointer;
+    }
+    .speed-control{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .speed-control input{
+      width:80px;
+      accent-color:var(--accent);
+    }
+
+    /* ── PROGRESS ── */
+    .progress-wrap{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .prog-bar{
+      flex:1;
+      min-width:200px;
+      height:4px;
+      background:rgba(110,130,255,.1);
+      border-radius:4px;
+      overflow:hidden;
+    }
+    .prog-fill{
+      height:100%;
+      background:linear-gradient(90deg, var(--gold), var(--accent));
+      border-radius:4px;
+      transition:width .4s ease;
+    }
+    .prog-label{
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      letter-spacing:.1em;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .path-crumbs{
+      font-size:12px;
+      color:var(--muted);
+      font-family:'DM Mono',monospace;
+      flex:2;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    /* ── MAIN PANEL ── */
+    .story-panel{
+      background:linear-gradient(180deg, rgba(10,12,27,.92), rgba(8,10,22,.80));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .scene-header{
+      padding:20px 24px 18px;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .scene-number{
+      font-family:'DM Mono',monospace;
+      font-size:10.5px;
+      letter-spacing:.2em;
+      color:var(--gold);
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .scene-name{
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.55rem;
+      font-weight:700;
+      line-height:1.1;
+    }
+    .scene-tags{
+      display:flex;
+      gap:6px;
+    }
+    .stag{
+      font-family:'DM Mono',monospace;
+      font-size:9.5px;
+      letter-spacing:.1em;
+      padding:3px 8px;
+      border-radius:4px;
+      text-transform:uppercase;
+    }
+    .stag-drama{ background:rgba(201,168,76,.12); color:var(--gold2); border:1px solid rgba(201,168,76,.2); }
+    .stag-narrating{ background:rgba(77,143,255,.12); color:#90beff; border:1px solid rgba(77,143,255,.2); animation:blink 1.5s infinite; }
+    @keyframes blink{ 50%{ opacity:.5; } }
+
+    /* ── NARRATIVE ── */
+    .narrative{
+      padding:26px 28px;
+      line-height:1.8;
+      font-size:16px;
+      color:#eef0ff;
+      font-weight:300;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .narrative p{ margin:0 0 14px 0; }
+    .narrative p:last-child{ margin-bottom:0; }
+    .emph{ color:var(--gold2); font-weight:600; font-style:italic; }
+    .glow{ text-shadow:0 0 20px rgba(77,143,255,.2); }
+    .highlight-word{
+      background:rgba(77,143,255,.15);
+      border-radius:3px;
+      padding:0 2px;
+      transition:background .1s;
+    }
+
+    /* ── CHOICES ── */
+    .choices-wrap{
+      padding:20px 24px 26px;
+    }
+    .choices-label{
+      font-family:'DM Mono',monospace;
+      font-size:10.5px;
+      letter-spacing:.16em;
+      color:var(--muted);
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+    .choices{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    @media(min-width:720px){
+      .choices{ grid-template-columns:1fr 1fr; }
+    }
+    .choiceBtn{
+      appearance:none;
+      background:rgba(13,16,32,.7);
+      border:1px solid var(--border);
+      border-radius:var(--r2);
+      color:var(--text);
+      padding:14px 18px;
+      cursor:pointer;
+      font-family:'Outfit',sans-serif;
+      font-size:14px;
+      font-weight:400;
+      text-align:left;
+      transition:all .18s;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      line-height:1.45;
+    }
+    .choiceBtn:hover{
+      background:rgba(77,143,255,.09);
+      border-color:rgba(77,143,255,.35);
+      transform:translateY(-2px);
+      box-shadow:0 8px 28px rgba(0,0,0,.3);
+    }
+    .choiceBtn:active{ transform:translateY(0); }
+    .choiceKey{
+      min-width:26px;
+      height:26px;
+      border-radius:6px;
+      background:rgba(77,143,255,.12);
+      border:1px solid rgba(77,143,255,.22);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'DM Mono',monospace;
+      font-size:12px;
+      font-weight:500;
+      color:var(--accent);
+      flex-shrink:0;
+      margin-top:1px;
+    }
+    .choiceText{ flex:1; }
+    .kbd{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      padding:2px 7px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:5px;
+      color:var(--muted);
+    }
+    .controls-hint{
+      padding:12px 24px 14px;
+      border-top:1px solid rgba(255,255,255,.05);
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight:300;
+    }
+
+    /* ── ENDING PANEL ── */
+    .ending-panel{
+      padding:40px 32px;
+      text-align:center;
+      display:none;
+    }
+    .ending-icon{
+      font-size:3rem;
+      margin-bottom:16px;
+    }
+    .ending-title{
+      font-family:'Cormorant Garamond',serif;
+      font-size:2rem;
+      font-weight:700;
+      margin-bottom:12px;
+      background:linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .ending-text{
+      font-size:15px;
+      color:var(--muted);
+      line-height:1.8;
+      max-width:580px;
+      margin:0 auto 32px;
+      font-weight:300;
+    }
+    .ending-actions{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .end-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:12px 26px;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:500;
+      font-family:'Outfit',sans-serif;
+      cursor:pointer;
+      border:none;
+      transition:all .18s;
+      text-decoration:none;
+    }
+    .end-btn-primary{
+      background:linear-gradient(135deg, var(--accent), #2a5fd4);
+      color:#fff;
+    }
+    .end-btn-primary:hover{ box-shadow:0 8px 28px rgba(77,143,255,.35); transform:translateY(-1px); }
+    .end-btn-gold{
+      background:linear-gradient(135deg, var(--gold), #8c6820);
+      color:#0b0d1c;
+      font-weight:600;
+    }
+    .end-btn-gold:hover{ box-shadow:0 8px 28px rgba(201,168,76,.35); transform:translateY(-1px); }
+    .end-btn-outline{
+      background:transparent;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+    .end-btn-outline:hover{ border-color:rgba(110,130,255,.35); background:rgba(77,143,255,.06); }
+
+    /* ── VIDEO PAYWALL MODAL ── */
+    .modal-overlay{
+      position:fixed; inset:0; z-index:100;
+      background:rgba(0,0,0,.85);
+      backdrop-filter:blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+    .modal{
+      background:var(--panel2);
+      border:1px solid var(--border);
+      border-radius:20px;
+      box-shadow:0 32px 80px rgba(0,0,0,.7);
+      width:min(540px,100%);
+      overflow:hidden;
+      animation:modalIn .25s ease;
+    }
+    @keyframes modalIn{
+      from{ opacity:0; transform:scale(.94) translateY(12px); }
+      to{ opacity:1; transform:scale(1) translateY(0); }
+    }
+    .modal-bar{
+      height:3px;
+      background:linear-gradient(90deg, var(--gold), var(--accent));
+    }
+    .modal-body{ padding:36px 36px 32px; }
+    .modal-icon{ font-size:2.8rem; margin-bottom:16px; }
+    .modal-title{
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.9rem;
+      font-weight:700;
+      margin-bottom:12px;
+      line-height:1.1;
+    }
+    .modal-title em{
+      font-style:italic;
+      background:linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .modal-desc{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.7;
+      margin-bottom:24px;
+      font-weight:300;
+    }
+    .modal-features{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:28px;
+    }
+    .modal-feat{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:13.5px;
+      font-weight:400;
+    }
+    .feat-icon{
+      width:30px;height:30px;
+      border-radius:8px;
+      background:rgba(201,168,76,.1);
+      border:1px solid rgba(201,168,76,.18);
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;
+      flex-shrink:0;
+    }
+    .modal-price{
+      background:rgba(201,168,76,.07);
+      border:1px solid rgba(201,168,76,.18);
+      border-radius:12px;
+      padding:16px 20px;
+      margin-bottom:24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .price-left{ display:flex; flex-direction:column; gap:3px; }
+    .price-label{
+      font-family:'DM Mono',monospace;
+      font-size:10px;
+      letter-spacing:.14em;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+    .price-val{
+      font-family:'Cormorant Garamond',serif;
+      font-size:2rem;
+      font-weight:700;
+      color:var(--gold2);
+      line-height:1;
+    }
+    .price-sub{ font-size:12px; color:var(--muted); }
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .modal-cta{
+      flex:1;
+      min-width:160px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:13px 20px;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:600;
+      font-family:'Outfit',sans-serif;
+      cursor:pointer;
+      border:none;
+      transition:all .18s;
+    }
+    .cta-gold{
+      background:linear-gradient(135deg, var(--gold), #9a6f1e);
+      color:#0b0d1c;
+    }
+    .cta-gold:hover{ box-shadow:0 8px 28px rgba(201,168,76,.4); transform:translateY(-1px); }
+    .cta-outline{
+      background:transparent;
+      color:var(--muted);
+      border:1px solid var(--border);
+      font-weight:400;
+    }
+    .cta-outline:hover{ color:var(--text); border-color:rgba(110,130,255,.35); }
+    .modal-legal{
+      margin-top:16px;
+      font-size:11px;
+      color:var(--muted);
+      text-align:center;
+      line-height:1.6;
+      font-weight:300;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <a href="../index.html" class="back-link">← Story Library</a>
+      <div class="story-title">The Quiet Inheritance</div>
+      <div class="story-subtitle">10 Scenes · 4 Choices Each · 4 Unique Endings</div>
+    </div>
+    <div class="toolbar">
+      <!-- Narration toggle -->
+      <button class="tbtn" id="narrateBtn" title="Toggle narration">
+        <span>🔊</span> <span id="narrateBtnLabel">Narrate Story</span>
+      </button>
+      <!-- Video -->
+      <button class="tbtn gold-btn" id="videoBtn" title="Generate your story as a video">
+        <span>🎬</span> Generate Video
+      </button>
+      <!-- Restart -->
+      <button class="tbtn danger" id="restartBtn" title="Restart story">↺ Restart</button>
+    </div>
+  </header>
+
+  <!-- Narration bar -->
+  <div id="narrationBar">
+    <span class="narr-label">🎙 Narrating</span>
+    <div class="narr-wave" id="narrWave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <span class="narr-status" id="narrStatus">Ready</span>
+    <div class="speed-control">
+      <span>Speed</span>
+      <input type="range" id="speedSlider" min="0.6" max="1.8" step="0.1" value="0.95"/>
+      <span id="speedVal">0.95×</span>
+    </div>
+    <select class="voice-select" id="voiceSelect">
+      <option value="">Loading voices…</option>
+    </select>
+    <button class="tbtn" id="stopNarrBtn" style="padding:7px 12px;font-size:12px;">■ Stop</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <span class="prog-label" id="sceneProgress">SCENE 1 / 10</span>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:10%"></div></div>
+    <span class="path-crumbs" id="pathCrumbs">Your story begins here.</span>
+  </div>
+
+  <!-- Story Panel -->
+  <div class="story-panel">
+    <div class="scene-header">
+      <div>
+        <div class="scene-number" id="sceneNumber">SCENE 1</div>
+        <div class="scene-name" id="sceneName">The Divorce Room</div>
+      </div>
+      <div class="scene-tags" id="sceneTags">
+        <span class="stag stag-drama">Drama</span>
+      </div>
+    </div>
+
+    <!-- Narrative text -->
+    <div class="narrative" id="narrative"></div>
+
+    <!-- Choices or ending -->
+    <div class="choices-wrap" id="choicesWrap">
+      <div class="choices-label">What does Marcus do?</div>
+      <div class="choices" id="choices"></div>
+    </div>
+
+    <!-- Ending panel (shown at END) -->
+    <div class="ending-panel" id="endingPanel">
+      <div class="ending-icon" id="endingIcon">🏆</div>
+      <div class="ending-title" id="endingTitle"></div>
+      <div class="ending-text" id="endingText"></div>
+      <div class="ending-actions">
+        <button class="end-btn end-btn-gold" id="videoEndBtn">🎬 Turn This Into a Video</button>
+        <button class="end-btn end-btn-primary" id="narrateEndBtn">🔊 Hear Your Ending</button>
+        <button class="end-btn end-btn-outline" id="restartEndBtn">↺ Try Another Path</button>
+      </div>
+    </div>
+
+    <div class="controls-hint" id="controlsHint">
+      Use keys <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> <span class="kbd">4</span> to choose · <span class="kbd">R</span> to restart
+    </div>
+  </div>
+
+</div><!-- .app -->
+
+<!-- Video Paywall Modal -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal">
+    <div class="modal-bar"></div>
+    <div class="modal-body">
+      <div class="modal-icon">🎬</div>
+      <div class="modal-title">Turn Your Story Into a <em>Video</em></div>
+      <div class="modal-desc">
+        We'll animate your unique story path — every choice you made, every scene you experienced — into a cinematic AI-generated video with voice narration and dynamic visuals.
+      </div>
+      <div class="modal-features">
+        <div class="modal-feat"><div class="feat-icon">🎙</div>AI voice narration of your exact story path</div>
+        <div class="modal-feat"><div class="feat-icon">🎨</div>Dynamic scene-by-scene visuals generated from your script</div>
+        <div class="modal-feat"><div class="feat-icon">🎞</div>Cinematic transitions tied to your choices</div>
+        <div class="modal-feat"><div class="feat-icon">📥</div>Download as MP4 — share anywhere</div>
+      </div>
+      <div class="modal-price">
+        <div class="price-left">
+          <span class="price-label">Per Story Video</span>
+          <span class="price-val">$2.99</span>
+          <span class="price-sub">One-time · Your specific path</span>
+        </div>
+        <div class="price-left">
+          <span class="price-label">Unlimited Monthly</span>
+          <span class="price-val">$9.99</span>
+          <span class="price-sub">/month · All stories, all paths</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cta cta-gold">✦ Unlock This Video — $2.99</button>
+        <button class="modal-cta cta-outline" id="closeVideoModal">Maybe Later</button>
+      </div>
+      <div class="modal-legal">Secure payment · Instant generation · No subscription required for single videos</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =====================================================
+     STORY DATA
+  ===================================================== */
+  const STORY = {
+    scenes: {
+      1: {
+        title: "The Divorce Room",
+        sceneNum: 1,
+        paragraphs: [
+          "The conference room smelled like money and finality. Marcus Jenkins sat across from the woman he'd married eight years ago — Simone, who was dressed like she was already celebrating, laughing softly at something Andre whispered near the window.",
+          "The attorney slid the papers forward. Marcus touched the envelope in his jacket pocket — felt the weight of what only he knew — and answered, calm as stone: <span class='emph'>no contest</span>.",
+          "He wasn't defeated. He was waiting. And patience, his father always said, was the most expensive thing a man could afford."
+        ],
+        choices: [
+          "Stay completely quiet. Sign without a word — let the silence be your statement.",
+          "Ask the attorney for a five-minute recess. Step into the hallway alone.",
+          "Look directly at Simone as you sign — hold her gaze the entire time.",
+          "Set down the pen. Calmly ask the attorney to read every clause aloud."
+        ],
+        next: (i, s) => ({ sceneId: 2, state: push(s, 1, i) })
+      },
+      2: {
+        title: "A Cold Tuesday",
+        sceneNum: 2,
+        paragraphs: [
+          "Three months earlier. Marcus had buried his father on the coldest Tuesday of that winter — just him, four sanitation workers who'd known the man for thirty years, and a preacher who kept his words short because that's how his father lived.",
+          "His name was Leonard Jenkins. He'd worked the same route for 31 years, never missed a day, never complained about the smell or the cold or the men who looked through him like glass.",
+          "Leonard left no speech, no advice column, no TED talk. He left a metal box and a letter. And Marcus, standing at the graveside, had no idea what either one meant yet."
+        ],
+        choices: [
+          "Go straight home after the burial. Sit with the quiet instead of running from it.",
+          "Call Simone from the cemetery. Tell her you need her there — right now.",
+          "Stop at your father's house before going anywhere else.",
+          "Go to work the next morning like nothing changed — strength through routine."
+        ],
+        next: (i, s) => ({ sceneId: 3, state: push(s, 2, i) })
+      },
+      3: {
+        title: "Rooms That Changed",
+        sceneNum: 3,
+        paragraphs: [
+          "Grief is a strange architect. It rearranges rooms without moving furniture.",
+          "Marcus came home and stood in doorways he'd walked through a thousand times — suddenly aware of every inch. Simone noticed the change in his eyes before he noticed it himself.",
+          "She asked what was wrong. He answered a half-second too slow. That half-second, tiny as it was, became the first crack in the wall between them."
+        ],
+        choices: [
+          "Tell Simone the truth about what you're feeling — all of it.",
+          "Keep the grief private. Protect her from the weight of it.",
+          "Throw yourself into fixing things around the house — stay useful, stay moving.",
+          "Start paying closer attention to Simone and Andre. Something feels off."
+        ],
+        next: (i, s) => ({ sceneId: 4, state: push(s, 3, i) })
+      },
+      4: {
+        title: "The Metal Box",
+        sceneNum: 4,
+        paragraphs: [
+          "On a Saturday afternoon, behind a wall of old tax returns and utility bills, Marcus found it — a fire-proof metal box with a combination lock.",
+          "The combination was written on a strip of masking tape stuck to the bottom. His father's handwriting, small and deliberate, like every letter cost something.",
+          "The lock clicked open with the sound of something deciding to be known. Inside: legal documents, stock certificates, corporate filings — all dated years before Marcus was born. At the bottom, an envelope with his name on it."
+        ],
+        choices: [
+          "Read every document carefully before touching the letter.",
+          "Open the letter first — your name is on it.",
+          "Lock it back up. You're not ready. You need a lawyer present.",
+          "Photograph everything immediately. Document before you absorb."
+        ],
+        next: (i, s) => ({ sceneId: 5, state: push(s, 4, i) })
+      },
+      5: {
+        title: "Nine Hundred Million",
+        sceneNum: 5,
+        paragraphs: [
+          "The number sat on the page like a misprint: <span class='emph'>$900,000,000</span>.",
+          "A trust fund, established in 1987, managed quietly through three LLCs and a private bank in Delaware. His father — the sanitation worker who never owned a car newer than 2003 — had been the sole beneficiary until his death.",
+          "Now Marcus was. The letter explained why Leonard had never said a word. <em>\"Character first, son. Always character first. Money is just a test you haven't taken yet.\"</em>"
+        ],
+        choices: [
+          "Tell Simone nothing. Not yet — not until you understand what this means.",
+          "Tell Simone tonight. She deserves to know. She's still your wife.",
+          "Call an attorney before you speak to anyone — including Simone.",
+          "Do nothing for 30 days. Sit with it. Let it settle."
+        ],
+        next: (i, s) => ({ sceneId: 6, state: push(s, 5, i) })
+      },
+      6: {
+        title: "Fine",
+        sceneNum: 6,
+        paragraphs: [
+          "Simone asked about money the way she always did — as a casual question with a grade attached. \"We doing okay this month?\" What she meant was: <em>am I settling?</em>",
+          "Marcus answered plainly. She said <span class='emph'>fine</span> the way people do when they mean the opposite — one syllable stretched thin as wire, ready to snap.",
+          "The next morning, over coffee that nobody drank, she asked for a divorce. No tears. No yelling. Just the flat, clean announcement of someone who had already moved on in her mind."
+        ],
+        choices: [
+          "Accept it quietly. Don't fight it — you know more than she does right now.",
+          "Ask her to wait. Tell her there's something you need to show her.",
+          "Ask her directly: is this about Andre?",
+          "Tell her it's fine. Make it easy. Dignity over drama."
+        ],
+        next: (i, s) => ({ sceneId: 7, state: push(s, 6, i) })
+      },
+      7: {
+        title: "The Last Signature",
+        sceneNum: 7,
+        paragraphs: [
+          "The papers gave Simone the house, the car, the joint savings. Marcus would walk away with his clothes, his tools, and no claim on any future assets.",
+          "Simone's attorney had drafted it like she was doing him a favor. Andre sat in the hallway — uninvited but present, like punctuation at the end of a sentence Marcus hadn't finished writing.",
+          "Marcus picked up the pen. His other hand found the letter in his jacket pocket — not the trust documents, just the letter. His father's handwriting. <em>Character first.</em>"
+        ],
+        choices: [
+          "Sign every page. Walk out clean. Let them have this moment.",
+          "Show Simone the letter — not the trust, just the letter. Let her read it.",
+          "Refuse the no-future-claims clause. There are assets this attorney doesn't know exist.",
+          "Sign the last page, fold it, slide it back — then stand up and leave without a word."
+        ],
+        next: (i, s) => ({ sceneId: 8, state: push(s, 7, i) })
+      },
+      8: {
+        title: "The Number Spreads",
+        sceneNum: 8,
+        paragraphs: [
+          "The divorce was finalized on a Thursday. Simone celebrated with Andre that Friday. By the following Tuesday, a number had started moving through certain circles — the kind of number that changes how people remember conversations.",
+          "A financial journal picked it up. Then a business blog. Then it wasn't a rumor anymore.",
+          "Marcus Jenkins. Son of Leonard Jenkins, sanitation worker, Route 7. New principal beneficiary. $900 million in managed assets. <span class='emph'>Quiet. Steady. Unchallengeable.</span>"
+        ],
+        choices: [
+          "Say nothing. Block every call. Let the world process it without you.",
+          "Send Simone a single message. One sentence. No explanation.",
+          "Invest in people who look like your father — quietly, without press.",
+          "Let Andre's behavior come to light on its own. Truth has its own timeline."
+        ],
+        next: (i, s) => ({ sceneId: 9, state: push(s, 8, i) })
+      },
+      9: {
+        title: "The Workshop",
+        sceneNum: 9,
+        paragraphs: [
+          "Six months after the divorce, Marcus converted his father's workshop into the first room of a community center in the neighborhood where Leonard had worked his route for three decades.",
+          "He kept one corner exactly as it was — tools on the pegboard, steel-toe boots on the shelf, the metal box on a bracket near the door.",
+          "He opened the letter every time he passed through. Not to remind himself of the money. To remind himself of the man."
+        ],
+        choices: [
+          "Build quietly. Fund programs. Invest in lives the world has already written off.",
+          "Visit the grave. Tell your father how you handled it. Ask if he'd be proud.",
+          "Write your own letter — for a son or daughter you don't have yet.",
+          "Invite one person from his old route to the opening. Don't explain why."
+        ],
+        next: (i, s) => ({ sceneId: 10, state: push(s, 9, i) })
+      },
+      10: {
+        title: "Choose Your Ending",
+        sceneNum: 10,
+        paragraphs: [
+          "This story could have ended with rage. With press conferences and lawsuits and the public spectacle of someone getting what they deserved.",
+          "It could have ended with heartbreak — a man left small by people who should have seen him.",
+          "<span class='emph'>Instead, it ends like this:</span> with a man who learned that the most powerful thing about him was never the number in the account. It was the fact that knowing it changed nothing about who he chose to be."
+        ],
+        choices: [
+          "The Steady Man — Build without ever needing credit.",
+          "The Locked Door — Silence as a boundary, not a punishment.",
+          "The Quiet Triumph — Victory that never needed an audience.",
+          "The Final Warning — Truth delivered once, with mercy and without regret."
+        ],
+        next: (i, s) => ({ sceneId: 'END', state: { ...push(s, 10, i), outcomeIdx: i } })
+      },
+      END: { title: '', sceneNum: 0, paragraphs: [], choices: [] }
+    }
+  };
+
+  const ENDINGS = [
+    {
+      id: 'STEADY_MAN',
+      icon: '🏗',
+      title: 'The Steady Man',
+      paragraphs: [
+        "Marcus doesn't correct the narrative. He outlasts it.",
+        "The day the number becomes public, Simone expects fireworks. What she gets is distance — measured, deliberate, without cruelty. The kind of distance that makes people realize they were the ones who created it.",
+        "Marcus turns the inheritance into work: housing, trade apprenticeships, scholarships for men who look like his father. Help that lands quietly, like sunrise that never asks for applause.",
+        "Years later, when someone calls him mysterious, he says nothing. He isn't mysterious. He's just steady — and steady, it turns out, is the rarest thing in any room."
+      ]
+    },
+    {
+      id: 'LOCKED_DOOR',
+      icon: '🔒',
+      title: 'The Locked Door',
+      paragraphs: [
+        "Marcus makes silence his boundary — not his weapon.",
+        "Simone reaches out twice. He doesn't respond with cruelty. He simply doesn't open doors that were closed on her terms. There is a difference between forgiveness and re-entry, and Marcus knows it now.",
+        "Andre recalculates. The math on his choices stops adding up. He finds a new stage with a smaller audience.",
+        "Power, Marcus decides, isn't what you do to people. It's what you refuse to let them pull out of you. He keeps that door locked — not with anger, but with the quiet certainty of a man who finally knows his own value."
+      ]
+    },
+    {
+      id: 'QUIET_TRIUMPH',
+      icon: '🌅',
+      title: 'The Quiet Triumph',
+      paragraphs: [
+        "Marcus chooses a different kind of victory: the kind nobody screenshots.",
+        "He funds programs that don't carry his name. He invests in men who were told they'd never matter — and then proves the lie with action, not announcements.",
+        "Simone learns too late that character doesn't need a banner. It's visible in how someone treats people when they no longer have to — when there's nothing left to prove and no audience watching.",
+        "Marcus stays the same person he was in that cold conference room. The world changes around him. That, he realizes, was always the point."
+      ]
+    },
+    {
+      id: 'FINAL_WARNING',
+      icon: '⚖',
+      title: 'The Final Warning',
+      paragraphs: [
+        "Marcus delivers truth without theatrics — which makes it more devastating than rage ever could.",
+        "He doesn't expose names for revenge. He exposes patterns: how someone measures a person's worth in savings accounts, how betrayal wears the face of friendship, how silence gets mistaken for weakness right up until it doesn't.",
+        "Simone can't un-know what the law confirms. Andre can't charm his way out of consequences that arrived quietly and completely.",
+        "But Marcus stays merciful toward himself — the hardest mercy of all. He doesn't become bitter. He becomes better. And better, as it turns out, is the only thing that lasts."
+      ]
+    }
+  ];
+
+  /* =====================================================
+     STATE MANAGEMENT
+  ===================================================== */
+  function push(state, sceneNum, choiceIdx) {
+    return { ...state, path: [...(state.path || []), { s: sceneNum, c: choiceIdx + 1 }] };
+  }
+  function cloneState(s) {
+    try { return structuredClone(s); } catch { return JSON.parse(JSON.stringify(s)); }
+  }
+
+  let appState = { sceneId: 1, path: [] };
+
+  /* =====================================================
+     NARRATION SYSTEM
+  ===================================================== */
+  let narrationEnabled = false;
+  let currentUtterance = null;
+  let voices = [];
+  let selectedVoiceIdx = -1;
+
+  function loadVoices() {
+    voices = speechSynthesis.getVoices();
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    if (!voices.length) {
+      sel.innerHTML = '<option value="">No voices found</option>';
+      return;
+    }
+    // Prefer English voices
+    const english = voices.filter(v => v.lang.startsWith('en'));
+    const list = english.length ? english : voices;
+    list.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${v.name} (${v.lang})`;
+      if (v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('google us') || i === 0) {
+        opt.selected = true;
+        selectedVoiceIdx = i;
+      }
+      sel.appendChild(opt);
+    });
+    if (selectedVoiceIdx === -1) selectedVoiceIdx = 0;
+  }
+
+  if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+  }
+
+  document.getElementById('voiceSelect').addEventListener('change', (e) => {
+    selectedVoiceIdx = parseInt(e.target.value);
+  });
+
+  document.getElementById('speedSlider').addEventListener('input', (e) => {
+    document.getElementById('speedVal').textContent = parseFloat(e.target.value).toFixed(2) + '×';
+    if (currentUtterance && speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      if (narrationEnabled) narrateCurrentScene();
+    }
+  });
+
+  function narrateText(text, onEnd) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const clean = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    const utt = new SpeechSynthesisUtterance(clean);
+    const spd = parseFloat(document.getElementById('speedSlider').value);
+    utt.rate = spd;
+    utt.pitch = 0.95;
+    const list = voices.filter(v => v.lang.startsWith('en'));
+    if (list.length && selectedVoiceIdx >= 0 && list[selectedVoiceIdx]) {
+      utt.voice = list[selectedVoiceIdx];
+    } else if (voices[selectedVoiceIdx]) {
+      utt.voice = voices[selectedVoiceIdx];
+    }
+    utt.onstart = () => {
+      document.getElementById('narrWave').classList.add('speaking');
+      document.getElementById('narrStatus').textContent = 'Speaking…';
+      // Add narrating tag
+      const tags = document.getElementById('sceneTags');
+      if (!tags.querySelector('.stag-narrating')) {
+        const t = document.createElement('span');
+        t.className = 'stag stag-narrating';
+        t.textContent = '🎙 Narrating';
+        t.id = 'narratingTag';
+        tags.appendChild(t);
+      }
+    };
+    utt.onend = () => {
+      document.getElementById('narrWave').classList.remove('speaking');
+      document.getElementById('narrStatus').textContent = 'Done';
+      const nt = document.getElementById('narratingTag');
+      if (nt) nt.remove();
+      if (onEnd) onEnd();
+    };
+    utt.onerror = () => {
+      document.getElementById('narrWave').classList.remove('speaking');
+      document.getElementById('narrStatus').textContent = 'Ready';
+    };
+    currentUtterance = utt;
+    speechSynthesis.speak(utt);
+  }
+
+  function narrateCurrentScene() {
+    if (!narrationEnabled) return;
+    const sceneId = appState.sceneId;
+    if (sceneId === 'END') return;
+    const scene = STORY.scenes[sceneId];
+    if (!scene) return;
+    const fullText = scene.title + '. ' + scene.paragraphs.join(' ') + ' What will Marcus do? ' + scene.choices.map((c,i) => `Option ${i+1}: ${c}`).join('. ');
+    narrateText(fullText);
+  }
+
+  document.getElementById('narrateBtn').addEventListener('click', () => {
+    narrationEnabled = !narrationEnabled;
+    const btn = document.getElementById('narrateBtn');
+    const bar = document.getElementById('narrationBar');
+    const label = document.getElementById('narrateBtnLabel');
+    if (narrationEnabled) {
+      btn.classList.add('active');
+      bar.classList.add('visible');
+      label.textContent = 'Stop Narration';
+      narrateCurrentScene();
+    } else {
+      btn.classList.remove('active');
+      bar.classList.remove('visible');
+      label.textContent = 'Narrate Story';
+      speechSynthesis.cancel();
+      document.getElementById('narrWave').classList.remove('speaking');
+      const nt = document.getElementById('narratingTag');
+      if (nt) nt.remove();
+    }
+  });
+
+  document.getElementById('stopNarrBtn').addEventListener('click', () => {
+    speechSynthesis.cancel();
+    document.getElementById('narrWave').classList.remove('speaking');
+    document.getElementById('narrStatus').textContent = 'Paused';
+  });
+
+  /* =====================================================
+     RENDER
+  ===================================================== */
+  function render() {
+    const sid = appState.sceneId;
+    const path = appState.path || [];
+
+    // Progress
+    const sceneNum = sid === 'END' ? 10 : (STORY.scenes[sid]?.sceneNum || 1);
+    const pct = sid === 'END' ? 100 : Math.round((sceneNum / 10) * 100);
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('sceneProgress').textContent = sid === 'END' ? 'COMPLETE' : `SCENE ${sceneNum} / 10`;
+    document.getElementById('pathCrumbs').textContent = path.length
+      ? path.map(p => `S${p.s}:${p.c}`).join(' › ')
+      : 'Your story begins here.';
+
+    if (sid === 'END') {
+      renderEnding();
+      return;
+    }
+
+    const scene = STORY.scenes[sid];
+    if (!scene) return;
+
+    document.getElementById('sceneNumber').textContent = `SCENE ${scene.sceneNum}`;
+    document.getElementById('sceneName').textContent = scene.title;
+
+    document.getElementById('narrative').innerHTML = scene.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+    // Choices
+    document.getElementById('choicesWrap').style.display = '';
+    document.getElementById('endingPanel').style.display = 'none';
+    document.getElementById('controlsHint').style.display = '';
+
+    const choicesEl = document.getElementById('choices');
+    choicesEl.innerHTML = '';
+    scene.choices.forEach((c, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'choiceBtn';
+      btn.setAttribute('data-choice', idx + 1);
+      btn.innerHTML = `<span class="choiceKey">${idx + 1}</span><span class="choiceText">${escHtml(c)}</span>`;
+      btn.addEventListener('click', () => {
+        const next = scene.next(idx, cloneState(appState));
+        appState = { ...next.state, sceneId: next.sceneId };
+        render();
+        if (narrationEnabled) narrateCurrentScene();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      choicesEl.appendChild(btn);
+    });
+  }
+
+  function renderEnding() {
+    const outcomeIdx = appState.outcomeIdx ?? 0;
+    const ending = ENDINGS[outcomeIdx] || ENDINGS[0];
+
+    document.getElementById('choicesWrap').style.display = 'none';
+    document.getElementById('controlsHint').style.display = 'none';
+
+    const ep = document.getElementById('endingPanel');
+    ep.style.display = 'block';
+
+    document.getElementById('sceneNumber').textContent = 'YOUR ENDING';
+    document.getElementById('sceneName').textContent = ending.title;
+    document.getElementById('endingIcon').textContent = ending.icon;
+    document.getElementById('endingTitle').textContent = ending.title;
+    document.getElementById('endingText').innerHTML = ending.paragraphs.map(p => `<p style="margin:0 0 12px">${p}</p>`).join('');
+
+    document.getElementById('narrative').innerHTML = '';
+
+    if (narrationEnabled) {
+      const fullText = ending.title + '. ' + ending.paragraphs.join(' ');
+      narrateText(fullText);
+    }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* =====================================================
+     CONTROLS
+  ===================================================== */
+  function restart() {
+    speechSynthesis.cancel();
+    appState = { sceneId: 1, path: [] };
+    document.getElementById('narrWave').classList.remove('speaking');
+    const nt = document.getElementById('narratingTag');
+    if (nt) nt.remove();
+    render();
+    if (narrationEnabled) setTimeout(narrateCurrentScene, 300);
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', restart);
+  document.getElementById('restartEndBtn').addEventListener('click', restart);
+
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('videoModal').classList.contains('open')) return;
+    const k = e.key.toLowerCase();
+    if (k === 'r') { restart(); return; }
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4) {
+      const btn = document.querySelector(`#choices button[data-choice="${n}"]`);
+      if (btn) btn.click();
+    }
+  });
+
+  /* =====================================================
+     VIDEO PAYWALL
+  ===================================================== */
+  function openVideoModal() {
+    document.getElementById('videoModal').classList.add('open');
+  }
+  document.getElementById('videoBtn').addEventListener('click', openVideoModal);
+  document.getElementById('videoEndBtn').addEventListener('click', openVideoModal);
+  document.getElementById('narrateEndBtn').addEventListener('click', () => {
+    if (appState.sceneId === 'END') {
+      const outcomeIdx = appState.outcomeIdx ?? 0;
+      const ending = ENDINGS[outcomeIdx] || ENDINGS[0];
+      narrateText(ending.title + '. ' + ending.paragraphs.join(' '));
+    }
+  });
+  document.getElementById('closeVideoModal').addEventListener('click', () => {
+    document.getElementById('videoModal').classList.remove('open');
+  });
+  document.getElementById('videoModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('videoModal')) {
+      document.getElementById('videoModal').classList.remove('open');
+    }
+  });
+
+  /* =====================================================
+     INIT
+  ===================================================== */
+  render();
+</script>
+</body>
+</html>
